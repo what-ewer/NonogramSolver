@@ -1,0 +1,2 @@
+# NonogramSolver
+Solver obrazków logicznych
