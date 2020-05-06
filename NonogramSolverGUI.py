@@ -5,10 +5,11 @@ import pygame
 pygame.init()
 pygame.font.init()
 
-DEFAULT_SIZE = 25
+DSIZE = 30
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GRAY = (200, 200, 200)
+sGap = 20
 
 LOGO = pygame.image.load('logo.png') 
 
@@ -21,26 +22,23 @@ class Grid:
         self.height = height
         self.rows = rows
         self.cols = cols
-        self.topHints = max(3, topHints)
-        self.leftHints = max(3, leftHints)
-        self.hintsHeight = self.topHints * DEFAULT_SIZE
-        self.hintsWidth = self.leftHints * DEFAULT_SIZE
+        self.topHints = topHints
+        self.leftHints = leftHints
+        self.hintsHeight = self.topHints * DSIZE
+        self.hintsWidth = self.leftHints * DSIZE
         self.solver = solver
-        self.sGap = 20
         self.holes = [[Hole(x, y, width, height) for x in range(rows)] for y in range(cols)]
         self.hints = self.__getHints__(hints)
-        self.wGap = (self.width - self.hintsWidth - self.sGap) / self.cols
-        self.hGap = (self.height - self.hintsHeight - self.sGap) / self.rows
 
     def draw(self):
         # Rysowanie siatki
         thickness = 2
 
         for i in range (self.rows + 1):
-            pygame.draw.line(self.window, BLACK, (self.hintsWidth, self.hintsHeight + i * self.hGap), (self.width - self.sGap, self.hintsHeight + i * self.hGap), thickness)
+            pygame.draw.line(self.window, BLACK, (self.hintsWidth, self.hintsHeight + i * DSIZE), (self.width - sGap, self.hintsHeight + i * DSIZE), thickness)
 
         for i in range (self.cols + 1):
-            pygame.draw.line(self.window, BLACK, (self.hintsWidth + i * self.wGap, self.hintsHeight), (self.hintsWidth + i * self.wGap, self.height - self.sGap), thickness)
+            pygame.draw.line(self.window, BLACK, (self.hintsWidth + i * DSIZE, self.hintsHeight), (self.hintsWidth + i * DSIZE, self.height - sGap), thickness)
         
         # Rysowanie logo
         #self.window.blit(LOGO, ((self.hintsWidth - 100) / 2, (self.hintsHeight - 100) / 2)) 
@@ -57,7 +55,7 @@ class Grid:
         # Rysowanie dziur
         for x in range(self.rows):
             for y in range(self.cols):
-                self.holes[y][x].draw(self.window, self.rows, self.cols, self.hintsWidth, self.hintsHeight, self.sGap)
+                self.holes[y][x].draw(self.window, self.rows, self.cols, self.hintsWidth, self.hintsHeight)
 
     # Refreshowanie planszy
     def refresh(self):
@@ -71,13 +69,13 @@ class Grid:
         if x < self.hintsWidth or y < self.hintsHeight:
             return
 
-        if x > self.width - self.sGap or y > self.height - self.sGap:
+        if x > self.width - sGap or y > self.height - sGap:
             return
 
         (x, y) = (x - self.hintsWidth, y - self.hintsHeight)
 
-        col = int(x // self.wGap)
-        row = int(y // self.hGap)
+        col = int(x // DSIZE)
+        row = int(y // DSIZE)
 
         hole = self.__getHole__(row, col)
         hole.addValue(val)
@@ -100,43 +98,33 @@ class Grid:
         return None
 
     def __getHints__(self, hints):
-        
-        h = [Hint(hint, i, len(hints[k][i]) - num - 1, k, self.hintsWidth / self.leftHints, self.hintsHeight / self.topHints) 
-            for k in range(2) for i in range(len(hints[0])) for num, hint in enumerate(hints[k][i])]
-        
-        print(h)
-
-        #h = [Hint(3, 0, 1, True, self.hintsWidth/self.leftHints, self.hintsHeight/self.topHints),
-        #     Hint(4, 0, 0, True, self.hintsWidth/self.leftHints, self.hintsHeight/self.topHints),
-        #     Hint(5, 0, 2, True, self.hintsWidth/self.leftHints, self.hintsHeight/self.topHints),
-        #     Hint(6, 0, 1, False, self.hintsWidth/self.leftHints, self.hintsHeight/self.topHints),
-        #     Hint(7, 0, 0, False, self.hintsWidth/self.leftHints, self.hintsHeight/self.topHints)]
-        #print(h)
-        return h
+        return [Hint(hint, i, len(hints[k][i]) - num - 1, k) 
+            for k in range(2) for i in range(len(hints[k])) for num, hint in enumerate(hints[k][i])]
 
 
 # Hint do pojedynczej wskazówki
 class Hint:
-    def __init__(self, value, rowcol, pos, allignment, width, height):
+    def __init__(self, value, rowcol, pos, allignment):
         self.value = value
         self.allignment = allignment
         self.rowcol = rowcol
         self.pos = pos
-        self.width = int(width)
-        self.height = int(height)
 
     def draw(self, window, hW, hH):
         if self.value != 0:
-            fSize = int(min(self.height, self.width) * 2/3)
+            fSize = int(15)
 
-            font = pygame.font.SysFont("comicsans", fSize)
+            font = pygame.font.SysFont("arialblack", fSize)
             text = font.render(str(self.value), 1, BLACK)
+            gap = 1
+            if self.value // 10:
+                gap = 1/2
 
             # self allignment = góra w przeciwnym wypadku lewa strona
             if self.allignment:
-                window.blit(text, (hW + self.width/2 + self.rowcol * self.width - fSize/4, hH - self.height/2 - (self.pos * self.height) - fSize/4))
+                window.blit(text, (hW + gap * DSIZE/3 + self.rowcol * DSIZE, hH - DSIZE - (self.pos * DSIZE)))
             else:
-                window.blit(text, (hW - self.width/2 - self.pos * self.width - fSize/4, hH + self.height/2 + self.rowcol * self.height - fSize/4))
+                window.blit(text, (hW - DSIZE*2/3 - self.pos * DSIZE, hH + DSIZE/4 + self.rowcol * DSIZE))
     
     
 
@@ -150,7 +138,7 @@ class Hole:
         self.width = width
         self.height = height
     
-    def draw(self, window, rows, cols, hW, hH, sGap):
+    def draw(self, window, rows, cols, hW, hH):
 
         if self.value % 3 == 0:
             # Brak zapełnienia
@@ -188,7 +176,7 @@ def load_nonogram(path):
 
 if __name__ == "__main__":
     n, width, height, hints, ts, ls = load_nonogram("hints/AGH")
-    (w_x, w_y) = (DEFAULT_SIZE * width, DEFAULT_SIZE * height)
+    (w_x, w_y) = (DSIZE * (width + ls) + sGap, DSIZE * (height + ts) + sGap)
     window = pygame.display.set_mode((w_x, w_y))
     pygame.display.set_caption("NonogramSolver")
     nonogramBoard = Grid(height, width, w_x,  w_y, window, hints, ts, ls, n)
