@@ -5,10 +5,12 @@ import pygame
 pygame.init()
 pygame.font.init()
 
-DSIZE = 30
+DSIZE = 40
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GRAY = (200, 200, 200)
+GREEN = (0, 128, 0)
+RED = (255, 0, 0)
 sGap = 20
 
 LOGO = pygame.image.load('logo.png') 
@@ -29,6 +31,8 @@ class Grid:
         self.solver = solver
         self.holes = [[Hole(x, y, width, height) for x in range(rows)] for y in range(cols)]
         self.hints = self.__getHints__(hints)
+        self.solved = False
+        self.solution = []
 
     def draw(self):
         # Rysowanie siatki
@@ -39,6 +43,18 @@ class Grid:
 
         for i in range (self.cols + 1):
             pygame.draw.line(self.window, BLACK, (self.hintsWidth + i * DSIZE, self.hintsHeight), (self.hintsWidth + i * DSIZE, self.height - sGap), thickness)
+
+        # Rysowanie Solve i Reset
+        fSize = int(DSIZE/2)
+        font = pygame.font.SysFont("arialblack", fSize)
+
+        pygame.draw.rect(window, GREEN, (0, 0, self.hintsWidth, self.hintsHeight/2), 0)
+        text = font.render("SOLVE", 1, BLACK)
+        window.blit(text, ((self.hintsWidth - 40)/2, self.hintsHeight/4 - fSize / 2))
+
+        pygame.draw.rect(window, RED, (0, self.hintsHeight/2, self.hintsWidth, self.hintsHeight/2), 0)
+        text = font.render("RESET", 1, BLACK)
+        window.blit(text, ((self.hintsWidth - 40)/2, self.hintsHeight*3/4 - fSize / 2))
         
         # Rysowanie logo
         #self.window.blit(LOGO, ((self.hintsWidth - 100) / 2, (self.hintsHeight - 100) / 2)) 
@@ -67,6 +83,10 @@ class Grid:
         (x, y) = mousePosition
 
         if x < self.hintsWidth or y < self.hintsHeight:
+            if y < self.hintsHeight/2 and x < self.hintsWidth:
+                self.solve()
+            elif y < self.hintsHeight and x < self.hintsWidth:
+                self.reset()
             return
 
         if x > self.width - sGap or y > self.height - sGap:
@@ -88,7 +108,14 @@ class Grid:
 
     # Rozwiązanie 
     def solve(self):
-        None
+        if not self.solved:
+            self.solver.solve()
+            self.solution = self.solver.state
+            self.solved = True
+
+        for x in range(self.rows):
+            for y in range(self.cols):
+                self.holes[y][x].value = self.solution[x,y]
 
     def __getHole__(self, row, col):
         for holesList in self.holes:
@@ -112,7 +139,7 @@ class Hint:
 
     def draw(self, window, hW, hH):
         if self.value != 0:
-            fSize = int(15)
+            fSize = int(DSIZE/2)
 
             font = pygame.font.SysFont("arialblack", fSize)
             text = font.render(str(self.value), 1, BLACK)
@@ -124,7 +151,7 @@ class Hint:
             if self.allignment:
                 window.blit(text, (hW + gap * DSIZE/3 + self.rowcol * DSIZE, hH - DSIZE - (self.pos * DSIZE)))
             else:
-                window.blit(text, (hW - DSIZE*2/3 - self.pos * DSIZE, hH + DSIZE/4 + self.rowcol * DSIZE))
+                window.blit(text, (hW + gap * DSIZE/3 - DSIZE - self.pos * DSIZE, hH + DSIZE/4 + self.rowcol * DSIZE))
     
     
 
@@ -163,8 +190,8 @@ class Hole:
 def load_nonogram(path):
     n = NonogramSolver(HintParser.parseFile(path))
 
-    top_size = 0
-    left_size = 0
+    top_size = 3
+    left_size = 3
     for i in range(len(n.hints[0])):
         left_size = max(left_size, len(n.hints[0][i]))
 
@@ -175,8 +202,17 @@ def load_nonogram(path):
 
 
 if __name__ == "__main__":
-    n, width, height, hints, ts, ls = load_nonogram("hints/AGH")
+    n, width, height, hints, ts, ls = load_nonogram("hints/statek")
+    
+    while DSIZE * (width + ls) + sGap > 1920:
+        DSIZE -= 2
+    
+    while DSIZE * (height + ts) + sGap > 1000:
+        DSIZE -= 2
+
+
     (w_x, w_y) = (DSIZE * (width + ls) + sGap, DSIZE * (height + ts) + sGap)
+    print(w_x, w_y)
     window = pygame.display.set_mode((w_x, w_y))
     pygame.display.set_caption("NonogramSolver")
     nonogramBoard = Grid(height, width, w_x,  w_y, window, hints, ts, ls, n)
@@ -187,7 +223,13 @@ if __name__ == "__main__":
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-
+            
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_s:
+                    nonogramBoard.solve()
+                if event.key == pygame.K_r:
+                    nonogramBoard.reset()
+            
             if event.type == pygame.MOUSEBUTTONDOWN:
                 inc = 0
                 if event.button == 3:
