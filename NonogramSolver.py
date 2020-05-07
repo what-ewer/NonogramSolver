@@ -15,18 +15,9 @@ class NonogramSolver:
         self.missing = self.width * self.height
         self.verbose = False
         self.__states = {-1: '.', 0: '?', 1: 'X'}
-        self.__pixels = {-1: 0xFF, 0: 0x80, 1: 0x00}
 
     def __str__(self):
         return "\n".join([''.join([self.__states[y] for y in x]) for x in self.state])
-
-    def saveImage(self, filepath):
-        img = np.zeros((self.height,self.width))
-        for i in range(self.height):
-            for j in range(self.width):
-                img[i][j] = self.__pixels[self.state[i][j]]
-        self.img = img.astype(np.uint8)
-        mpimg.imsave(filepath, self.img, cmap = 'gray')
 
     def __howManyMissing(self):
         return np.sum(self.state == 0)
