@@ -170,7 +170,7 @@ class MainWindow:
         while MainWindow.DSIZE * (height + ts) + MainWindow.sGap > 1000:
             MainWindow.DSIZE -= 2
         (w_x, w_y) = (MainWindow.DSIZE * (width + ls) + MainWindow.sGap, MainWindow.DSIZE * (height + ts) + MainWindow.sGap)
-        print(w_x, w_y)
+        #print(w_x, w_y)
         window = pygame.display.set_mode((w_x, w_y))
         pygame.display.set_caption("NonogramSolver")
         nonogramBoard = Grid(height, width, w_x,  w_y, window, hints, ts, ls, n)
