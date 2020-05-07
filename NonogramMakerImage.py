@@ -34,12 +34,9 @@ class Grid:
     # Zapisanie planszy
     def save(self):
         print("Zamiana obrazka na podpowiedzi i zapisywanie")
-
         solution = [[], []]
-        print(solution)
-        print(len(self.holes[0]))
-
         tmp = 0
+
         for x in range(self.rows):
             arr = []
             for y in range(self.cols):
@@ -48,13 +45,10 @@ class Grid:
                 elif tmp != 0:
                     arr.append(tmp)
                     tmp = 0
-
             if  tmp != 0:
                 arr.append(tmp)
-
             if len(arr) == 0:
                 arr.append(tmp)
-
             solution[0].append(arr)
             tmp = 0
 
@@ -62,20 +56,17 @@ class Grid:
             arr = []
             for y in range(self.rows):
                 if (self.holes[x][y] % 2 == 1):
-                    tmp += 1
+                    tmp += self.holes[x][y] % 2
                 elif tmp != 0:
                     arr.append(tmp)
-                    tmp = 0
-            
+                    tmp = 0     
             if  tmp != 0:
                 arr.append(tmp)
-
             if len(arr) == 0:
                 arr.append(0)
-
             solution[1].append(arr)
             tmp = 0
-
+            
         f = open(self.filename, mode="w+", encoding="utf-8")
         f.write(str(solution))
         f.close()

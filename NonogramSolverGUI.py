@@ -86,14 +86,14 @@ class Grid:
             for y in range(self.cols):
                 self.holes[y][x].value = self.solution[x,y]
 
-    def __getHole__(self, row, col):
+    def __getHole(self, row, col):
         for holesList in self.holes:
             for h in holesList:
                 if h.row == row and h.col == col:
                     return h
         return None
 
-    def __getHints__(self, hints):
+    def __getHints(self, hints):
         return [Hint(hint, i, len(hints[k][i]) - num - 1, k) 
             for k in range(2) for i in range(len(hints[k])) for num, hint in enumerate(hints[k][i])]
 

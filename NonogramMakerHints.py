@@ -21,16 +21,16 @@ class NonogramMakerHints:
         root.resizable(0, 0)
         self.root = root
 
-        main_label = Label(root, text = "Podaj po przecinku liczby dla wiersza 0")
+        main_label = Label(root, text="Podaj po przecinku liczby dla wiersza 0")
         main_label.grid(column=0, row=0, rowspan=1, columnspan=3, pady=5, padx=5)
         self.main_label = main_label
 
         values = Entry(root)
-        values.grid(column=5, row=3, rowspan = 1, columnspan = 2, pady=5, padx = 5)
+        values.grid(column=5, row=3, rowspan=1, columnspan=2, pady=5, padx=5)
         self.values = values
 
         confirm_button = Button(root, text="OK", command=self.parseInput)
-        confirm_button.grid(column=0, row=4, rowspan = 2, columnspan = 3, pady=5, padx = 5)
+        confirm_button.grid(column=0, row=4, rowspan=2, columnspan=3, pady=5, padx=5)
         self.confirm_button = confirm_button
 
         root.mainloop()
@@ -43,20 +43,20 @@ class NonogramMakerHints:
         if self.i >= self.rows:
             txt = "Podaj po przecinku liczby dla kolumny "
             txt += str(self.i - 3)
-            self.main_label = Label(self.root, text = txt)
+            self.main_label = Label(self.root, text=txt)
             self.main_label.grid(column=0, row=0, rowspan=1, columnspan=3, pady=5, padx=5)
         else:
             txt = "Podaj po przecinku liczby dla wiersza "
             txt += str(self.i)
-            self.main_label = Label(self.root, text = txt)
-            self.main_label.grid(column=0, row=0, rowspan=1, columnspan=3, pady=5, padx=5) 
+            self.main_label = Label(self.root, text=txt)
+            self.main_label.grid(column=0, row=0, rowspan=1, columnspan=3, pady=5, padx=5)
 
         if not v:
             v = [0]
         else:
             v = v.split(", ")
             v = list(map(int, v))
-        
+
         if self.i > self.rows:
             self.solution[1].append(v)
         else:
