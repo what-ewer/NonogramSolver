@@ -77,14 +77,18 @@ class Grid:
 
     # Rozwiązanie 
     def solve(self):
-        if not self.solved:
-            self.solver.solve()
-            self.solution = self.solver.state
-            self.solved = True
+        try:
+            if not self.solved:
+                self.solver.solve()
+                self.solution = self.solver.state
+                self.solved = True
+        except:
+            print("Nie można było rozwiązać obrazka")
+            pygame.quit()
 
         for x in range(self.rows):
             for y in range(self.cols):
-                self.holes[y][x].value = self.solution[x,y]
+                self.holes[y][x].value = self.solution[x][y]
 
     def __getHole(self, row, col):
         for holesList in self.holes:
