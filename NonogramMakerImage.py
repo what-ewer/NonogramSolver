@@ -1,13 +1,15 @@
 import pygame
+import numpy as np
 
 class Grid:
 
-    def __init__(self, rows, cols, width, height, window):
+    def __init__(self, rows, cols, width, height, window, filename):
         self.window = window
         self.width = width
         self.height = height
         self.rows = rows
         self.cols = cols
+        self.filename = filename
         self.holes = [[0 for x in range(rows)] for y in range(cols)]
 
     def draw(self):
@@ -32,7 +34,53 @@ class Grid:
     # Zapisanie planszy
     def save(self):
         print("Zamiana obrazka na podpowiedzi i zapisywanie")
-        pass
+
+        solution = [[], []]
+        print(solution)
+        print(len(self.holes[0]))
+
+        tmp = 0
+        for x in range(self.rows):
+            arr = []
+            for y in range(self.cols):
+                if (self.holes[y][x] % 2 == 1):
+                    tmp += 1
+                elif tmp != 0:
+                    arr.append(tmp)
+                    tmp = 0
+
+            if  tmp != 0:
+                arr.append(tmp)
+
+            if len(arr) == 0:
+                arr.append(tmp)
+
+            solution[0].append(arr)
+            tmp = 0
+
+        for x in range(self.cols):
+            arr = []
+            for y in range(self.rows):
+                if (self.holes[x][y] % 2 == 1):
+                    tmp += 1
+                elif tmp != 0:
+                    arr.append(tmp)
+                    tmp = 0
+            
+            if  tmp != 0:
+                arr.append(tmp)
+
+            if len(arr) == 0:
+                arr.append(0)
+
+            solution[1].append(arr)
+            tmp = 0
+
+        f = open(self.filename, mode="w+", encoding="utf-8")
+        f.write(str(solution))
+        f.close()
+        #print(str(solution))
+
 
     # Handler kliknięcia na plansze
     def click(self, mousePosition, val):
@@ -61,7 +109,7 @@ class MainWindow:
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
 
-    def __init__(self, height, width):
+    def __init__(self, width, height, filename):
         MainWindow.DSIZE = 60
         pygame.init()
         pygame.font.init()
@@ -76,7 +124,7 @@ class MainWindow:
         window = pygame.display.set_mode((w_x, w_y))
 
         pygame.display.set_caption("NonogramMakerImage")
-        nonogramBoard = Grid(height, width, w_x,  w_y, window)
+        nonogramBoard = Grid(height, width, w_x,  w_y, window, filename)
         run = True
 
         while run:
@@ -87,7 +135,9 @@ class MainWindow:
                     if event.key == pygame.K_s:
                         nonogramBoard.save()
                     if event.key == pygame.K_r:
-                        nonogramBoard.reset()        
+                        nonogramBoard.reset()   
+                    if event.key == pygame.K_e:
+                        run = False     
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     inc = 0
                     if event.button == 3:
@@ -101,3 +151,6 @@ class MainWindow:
             nonogramBoard.refresh()
             pygame.display.update()
         pygame.quit()
+
+if __name__ == "__main__":
+    nmi = MainWindow(10, 5, "test")
