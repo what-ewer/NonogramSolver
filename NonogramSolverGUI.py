@@ -161,6 +161,7 @@ class MainWindow:
     sGap = 20
 
     def __init__(self, path):
+        MainWindow.DSIZE = 60
         pygame.init()
         pygame.font.init()
         n, width, height, hints, ts, ls = MainWindow.load_nonogram(path)

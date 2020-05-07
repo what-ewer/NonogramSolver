@@ -3,7 +3,7 @@ import os
 import NonogramSolverGUI as NSGUI
 
 def solve():
-    nonogram = listbox.get(listbox.curselection())
+    nonogram = hintsListbox.get(hintsListbox.curselection())
     to_solve = "hints/" + nonogram
     nGUI = NSGUI.MainWindow(nonogram)
 
@@ -18,14 +18,14 @@ if __name__ == "__main__":
     lbl = Label(top,text = "Wybierz obrazek logiczny z listy")
     lbl.pack()
 
-    listbox = Listbox(top)
+    hintsListbox = Listbox(top)
     os.chdir(path)
     items = os.listdir()
     i = 1
     for item in items:
-        listbox.insert(i, item)
+        hintsListbox.insert(i, item)
         i += 1
-    listbox.pack()
+    hintsListbox.pack()
 
 
     button = Button(top, text="Rozwiąż obrazek logiczny", command = solve)
