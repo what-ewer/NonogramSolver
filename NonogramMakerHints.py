@@ -17,6 +17,7 @@ class NonogramMakerHints:
         c.grid(column=0, row=0, sticky=(N, W, E, S))
         root.grid_columnconfigure(0, weight=1)
         root.grid_rowconfigure(0, weight=1)
+        root.title("NonogramMakerHints")
 
         root.resizable(0, 0)
         self.root = root

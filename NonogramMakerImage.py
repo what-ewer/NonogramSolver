@@ -66,7 +66,7 @@ class Grid:
                 arr.append(0)
             solution[1].append(arr)
             tmp = 0
-            
+
         f = open(self.filename, mode="w+", encoding="utf-8")
         f.write(str(solution))
         f.close()
@@ -90,9 +90,7 @@ class Grid:
 
     # Reset wartości dziur
     def reset(self):
-        for holesList in self.holes:
-            for h in holesList:
-                h.value = 0
+        self.holes = [[0 for x in range(self.rows)] for y in range(self.cols)]
 
 class MainWindow:
     GAP = 5
