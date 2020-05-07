@@ -20,7 +20,7 @@ def makeFromHints():
     h = int(heightSize.get())
     name = nonogramName.get()
 
-    NMH.NonogramMakerHints(w, h, name)
+    NMH.NonogramMakerHints(h, w, name)
     print("Tworzenie obrazku logicznego o wymiarach ", w, " x ", h)
 
 def makeFromImage():

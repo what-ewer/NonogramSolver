@@ -38,11 +38,10 @@ class NonogramMakerHints:
     def parseInput(self):
         self.i += 1
         v = self.values.get()
-        print(v)
 
         if self.i >= self.rows:
             txt = "Podaj po przecinku liczby dla kolumny "
-            txt += str(self.i - 3)
+            txt += str(self.i - self.rows)
             self.main_label = Label(self.root, text=txt)
             self.main_label.grid(column=0, row=0, rowspan=1, columnspan=3, pady=5, padx=5)
         else:

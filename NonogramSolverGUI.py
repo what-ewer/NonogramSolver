@@ -17,7 +17,7 @@ class Grid:
         self.hintsWidth = self.leftHints * MainWindow.DSIZE
         self.solver = solver
         self.holes = [[Hole(x, y, width, height) for x in range(rows)] for y in range(cols)]
-        self.hints = self.__getHints__(hints)
+        self.hints = self.__getHints(hints)
         self.solved = False
         self.solution = []
 
@@ -66,7 +66,7 @@ class Grid:
         (x, y) = (x - self.hintsWidth, y - self.hintsHeight)
         col = int(x // MainWindow.DSIZE)
         row = int(y // MainWindow.DSIZE)
-        hole = self.__getHole__(row, col)
+        hole = self.__getHole(row, col)
         hole.addValue(val)
 
     # Reset wartości dziur
